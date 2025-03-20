@@ -2,34 +2,54 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
     function index()
     {
-        $allPosts = [
-            ['id' => 1, 'title' => 'PHP', 'posted_by' => 'Yassine', 'created_at' => '2025-03-09 09:00:00'],
-            ['id' => 2, 'title' => 'Javascript', 'posted_by' => 'Mohammed', 'created_at' => '2024-02-10 10:00:00'],
-            ['id' => 3, 'title' => 'HTML', 'posted_by' => 'Mahmoud', 'created_at' => '2022-12-04 05:00:00'],
-            ['id' => 4, 'title' => 'CSS', 'posted_by' => 'Ali', 'created_at' => '2021-11-15 03:00:00'],
-        ];
-        return view('posts.index', ['posts' => $allPosts]);
+        $postsFromDB = Post::all();
+        return view('posts.index', ['posts' => $postsFromDB]);
     }
 
-    function show($postId){
-        $singlePost = [
-            'id' => 1, 'title' => 'PHP', 'description' => 'this is description', 'posted_by' => 'Yassine', 'created_at' => '2025-03-09 09:00:00',
-        ];
-        return view('posts.show', ['post' => $singlePost]);
+    function show(Post $post){
+        return view('posts.show', ['post' => $post]);
     }
 
     function create(){
-        return view('posts.create');
+        $users = User::all();
+        return view('posts.create', ['users' => $users]);
     }
 
     function store(){
+        Post::create([
+            'title' => request()->title,
+            'description' => request()->description,
+            'user_id' => request()->post_creator
+        ]);
 
+        return to_route('posts.index');
+    }
+    function edit(Post $post){
+        $users = User::all();
+        return view('posts.edit', ['post' => $post, 'users' => $users]);
+    }
+
+    function update(Post $post){
+
+        $post->update([
+            'title' => request()->title,
+            'description' => request()->description,
+            'user_id' => request()->post_creator,
+        ]);
+
+        return to_route('posts.show',$post->id);
+    }
+
+    function destroy(Post $post){
+        $post->delete();
         return to_route('posts.index');
     }
 }

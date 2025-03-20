@@ -20,14 +20,18 @@
         <tbody>
         @foreach($posts as $post)
             <tr>
-                <th scope="row">{{$post['id']}}</th>
-                <td>{{ $post['title'] }}</td>
-                <td>{{ $post['posted_by'] }}</td>
-                <td>{{ $post['created_at'] }}</td>
+                <th scope="row">{{$post->id}}</th>
+                <td>{{$post->title}}</td>
+                <td>{{$post->user ? $post->user->name : 'Not Found'}}</td>
+                <td>{{$post->created_at}}</td>
                 <td>
-                    <a href="{{route('posts.show', $post['id'])}}" class="btn btn-info">View</a>
-                    <a href="/posts/edit/{{$post['id']}}" class="btn btn-primary">Edit</a>
-                    <a href="/posts/delete/{{$post['id']}}" class="btn btn-danger">Edit</a>
+                    <a href="{{route('posts.show', $post->id)}}" class="btn btn-info">View</a>
+                    <a href="{{route('posts.edit', $post->id)}}" class="btn btn-primary">Edit</a>
+                    <form style="display:inline;" method="POST" action="{{route('posts.destroy', $post->id)}}">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this post?');">Delete</button>
+                    </form>
                 </td>
             </tr>
         @endforeach
