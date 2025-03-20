@@ -24,6 +24,11 @@ class PostController extends Controller
     }
 
     function store(){
+        request()->validate([
+            'title' => ['required', 'min:3'],
+            'description' => ['required', 'min:5'],
+            'post_creator' => ['required', 'exists:users,id'],
+        ]);
         Post::create([
             'title' => request()->title,
             'description' => request()->description,
@@ -38,7 +43,11 @@ class PostController extends Controller
     }
 
     function update(Post $post){
-
+        request()->validate([
+            'title' => ['required', 'min:3'],
+            'description' => ['required', 'min:5'],
+            'post_creator' => ['required', 'exists:users,id'],
+        ]);
         $post->update([
             'title' => request()->title,
             'description' => request()->description,
